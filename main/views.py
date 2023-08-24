@@ -7,9 +7,16 @@ from .models import Post
 
 @login_required(login_url='/login')
 def home(request):
+
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        if post_id:
+            requested_post = Post.objects.get(pk=post_id)
+            requested_post.delete()
+            return redirect('/home')
+
     posts = Post.objects.all().select_related('author')
-    context = {'posts': posts}
-    return render(request, 'main/home.html', context=context)
+    return render(request, 'main/home.html', {'posts': posts})
 
 
 def sign_up(request):
