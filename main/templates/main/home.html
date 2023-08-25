@@ -12,7 +12,7 @@
           <p>{{ post.text }}</p>
         </div>
         <div>
-          {% if request.user == post.author %}
+          {% if request.user == post.author or perms.main.delete_post %}
             <form method="post">
               {% csrf_token %}
               <!-- Button trigger modal -->

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from .forms import RegisterForm, PostForm
 from .models import Post
 
@@ -10,8 +10,8 @@ def home(request):
 
     if request.method == 'POST':
         post_id = request.POST.get('post_id')
-        if post_id:
-            requested_post = Post.objects.get(pk=post_id)
+        requested_post = Post.objects.filter(id=post_id).first()
+        if requested_post and (requested_post.author == request.user or request.user.has_perm('main.delete_post')):
             requested_post.delete()
             return redirect('/home')
 
@@ -32,6 +32,7 @@ def sign_up(request):
 
 
 @login_required(login_url='/login')
+@permission_required('main.add_post', login_url='/login', raise_exception=True)
 def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
