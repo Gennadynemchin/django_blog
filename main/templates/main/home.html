@@ -50,6 +50,20 @@
               </div>
             </form>
           {% endif %}
+
+          {% if user.is_staff %}
+            <br>
+            <form method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger" name="post_author_id" value="{{ post.author.id }}">Block user</button>
+            </form>
+          {% endif %}
+          <br>
+          <form method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-success" name="like" value="{{ post.id }}">Like</button>
+          </form>
+
         </div>
       </div>
       <div class="card footer text-muted">{{ post.created_at }}</div>
