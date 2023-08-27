@@ -8,15 +8,7 @@ class Post(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(User, related_name='liked_posts')
 
     def __str__(self):
         return f'{self.author} created post: {self.title}'
-
-
-class LikedPost(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    liked_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.post.title + " liked by " + self.user
