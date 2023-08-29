@@ -25,11 +25,19 @@ def home(request):
     return render(request, 'main/home.html', {'posts': posts})
 
 
+def is_liked(post, user_id):
+    if post.likes.filter(id=user_id):
+        return 'Unlike'
+    else:
+        return 'Like'
+
+
 @login_required(login_url='/login')
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     comments = post.comments.all()
-    context = {'post': post, 'comments': comments}
+    like_status = is_liked(post, request.user.id)
+    context = {'post': post, 'comments': comments, 'like_status': like_status}
     return render(request, 'main/post_detail.html', context)
 
 
@@ -62,14 +70,11 @@ def create_post(request):
 
 @login_required(login_url='/login')
 def like(request):
-    if request.POST.get('like_post'):
-        like = request.POST.get('like_post')
-        user = User.objects.filter(id=request.user.id).first()
-        post = Post.objects.filter(id=like).first()
-        post.likes.add(user)
-    else:
-        like = request.POST.get('unlike_post')
-        user = User.objects.filter(id=request.user.id).first()
-        post = Post.objects.filter(id=like).first()
+    like = request.POST.get('like')
+    user = User.objects.filter(id=request.user.id).first()
+    post = Post.objects.filter(id=like).first()
+    if post.likes.filter(id=user.id).exists():
         post.likes.remove(user)
+    else:
+        post.likes.add(user)
     return HttpResponseRedirect(reverse('post_detail', args=[post.slug]))

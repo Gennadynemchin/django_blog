@@ -9,11 +9,7 @@
 
     <form action="{% url 'like' %}" method="post">
               {% csrf_token %}
-              {% if post|has_like:user.id %}
-              <button type="submit" class="btn btn-link" name="unlike_post" value="{{ post.id }}">Unlike</button>
-              {% else %}
-              <button type="submit" class="btn btn-link" name="like_post" value="{{ post.id }}">Like</button>
-              {% endif %}
+              <button type="submit" class="btn btn-link" name="like" value="{{ post.id }}">{{ like_status }}</button>
     </form>
 
     {% for comment in comments %}
