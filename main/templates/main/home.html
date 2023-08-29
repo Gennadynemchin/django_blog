@@ -10,7 +10,7 @@
       </div>
       <div class="card-body d-flex flex-row justify-content-between">
         <div>
-          <h5 class="card-title">{{ post.title }}</h5>
+          <h5 class="card-title"> <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a></h5>
           <p>{{ post.text }}</p>
         </div>
         <div>
@@ -19,7 +19,7 @@
               {% csrf_token %}
               <!-- Button trigger modal -->
               <button type="button"
-                      class="btn btn-primary"
+                      class="btn btn-danger"
                       data-bs-toggle="modal"
                       data-bs-target="#exampleModal">Delete post</button>
               <!-- Modal -->
@@ -63,18 +63,8 @@
 
         </div>
       </div>
-      <div class="card footer text-muted">{{ post.created_at }}</div>
-      <div class="card footer text-muted">Likes: {{ post.likes.count }}
-      <form method="post">
-              {% csrf_token %}
-              {% if post|has_like:user.id %}
-              <button type="submit" class="btn btn-success" name="unlike_post" value="{{ post.id }}">Unlike</button>
-              {% else %}
-              <button type="submit" class="btn btn-success" name="like_post" value="{{ post.id }}">Like</button>
-              {% endif %}
+      <div class="card footer text-muted">{{ post.created_at }} | Likes: {{ post.likes.count }}</div>
 
-          </form>
-      </div>
     </div>
   {% empty %}
     <p>No posts yet</p>
