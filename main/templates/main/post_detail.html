@@ -1,5 +1,4 @@
 {% extends 'main/base.html' %}
-{% load has_like %}
 
 {% block title %} {{ post.title }} {% endblock %}
 
@@ -11,6 +10,8 @@
               {% csrf_token %}
               <button type="submit" class="btn btn-link" name="like" value="{{ post.id }}">{{ like_status }}</button>
     </form>
+
+    <a href="{% url 'create_comment' post.slug %}">Add comment</a>
 
     {% for comment in comments %}
         {{ comment.user }}

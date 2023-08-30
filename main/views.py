@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from .forms import RegisterForm, PostForm
+from .forms import RegisterForm, PostForm, CommentForm
 from django.contrib.auth.models import User
 from .models import Post, Comment
 
@@ -66,6 +66,18 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, 'main/create_post.html', {'form': form})
+
+
+def create_comment(request, slug):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        user = request.user.id
+        post = Post.objects.get(slug=slug)
+        if form.is_valid():
+            print(form.cleaned_data, user, slug)
+    else:
+        form = CommentForm()
+    return render(request, 'main/create_comment.html', {'form': form})
 
 
 @login_required(login_url='/login')

@@ -8,5 +8,6 @@ urlpatterns = [
     path('post/<slug:slug>', views.post_detail, name='post_detail'),
     path('sign_up', views.sign_up, name='sign_up'),
     path('create_post', views.create_post, name='create_post'),
-    path('like', views.like, name='like')
+    path('like', views.like, name='like'),
+    path('post/<slug:slug>/create_comment', views.create_comment, name='create_comment')
 ]
