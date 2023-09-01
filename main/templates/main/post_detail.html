@@ -1,49 +1,78 @@
 {% extends 'main/base.html' %}
-{% block title %} {{ post.title }} {% endblock %}
-
+{% block title %}{{ post.title }}{% endblock %}
 {% block content %}
-    {{ post.title }}
-    {{ post.text }}
-
-    <form action="{% url 'like' %}" method="post">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-link" name="like" value="{{ post.id }}">{{ like_status }}</button>
+  {{ post.title }}
+  {{ post.text }}
+  <form action="{% url 'like' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-link" name="like" value="{{ post.id }}">{{ like_status }}</button>
+  </form>
+  <p class="d-inline-flex gap-1">
+    <button class="btn btn-link"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseExample"
+            aria-expanded="false"
+            aria-controls="collapseExample">Add comment</button>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <form action="{% url 'create_comment' post.slug %}" method="post">
+      {% csrf_token %}{{ form }}
+      <br>
+      <button type="submit" class="btn btn-success btn-sm">Create comment</button>
     </form>
-
-    <p class="d-inline-flex gap-1">
-        <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            Add comment
-        </button>
-    </p>
-    <div class="collapse" id="collapseExample">
-        <form action="{% url 'create_comment' post.slug %}" method="post">
+  </div>
+  <br>
+  {% for comment in comments %}
+    {% if comment.is_parent %}
+      <div class="card border-light mb-3" style="max-width: 38rem;">
+        <div class="card-header">{{ comment.user }} | {{ comment.date_added }}</div>
+        <div class="card-body">
+          <p class="card-text">{{ comment.body }}</p>
+        </div>
+        <p class="d-inline-flex gap-1">
+          <button class="btn btn-link"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseExampleReply{{ comment.id }}"
+                  aria-expanded="false"
+                  aria-controls="collapseExampleReply{{ comment.id }}">Reply</button>
+        </p>
+        <div class="collapse" id="collapseExampleReply{{ comment.id }}">
+          <form action="{% url 'create_reply' post.slug comment.id %}" method="post">
             {% csrf_token %}{{ form }}
             <br>
-            <button type="submit" class="btn btn-success btn-sm">Create comment</button>
-        </form>
-    </div>
-    <br>
-
-    {% for comment in comments %}
-        <strong>{{ comment.user }} | {{ comment.date_added }}</strong><br>
-        {{ comment.body }}
-        <br>
-
-        <p class="d-inline-flex gap-1">
-            <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExampleReply{{comment.id}}" aria-expanded="false" aria-controls="collapseExampleReply{{comment.id}}">
-                Reply
-            </button>
-        </p>
-        <div class="collapse" id="collapseExampleReply{{comment.id}}">
-            <form action="{% url 'create_reply' post.slug comment.id %}" method="post">
-                {% csrf_token %}{{ form }}
-                <br>
-                <button type="submit" class="btn btn-success btn-sm">Reply</button>
-            </form>
+            <button type="submit" class="btn btn-success btn-sm">Reply</button>
+          </form>
         </div>
-
-        <br>
-    {% empty %}
+      </div>
+      {% for reply in comment.children %}
+        <div class="card border-light mb-3" style="max-width: 18rem;">
+          <div class="card-header">{{ reply.user }} | {{ reply.date_added }}</div>
+          <div class="card-body">
+            <p class="card-text">{{ reply.body }}</p>
+          </div>
+          <p class="d-inline-flex gap-1">
+            <button class="btn btn-link"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseExampleReply{{ reply.id }}"
+                    aria-expanded="false"
+                    aria-controls="collapseExampleReply{{ reply.id }}">Reply</button>
+          </p>
+          <div class="collapse" id="collapseExampleReply{{ reply.id }}">
+            <form action="{% url 'create_reply' post.slug comment.id %}" method="post">
+              {% csrf_token %}{{ form }}
+              <br>
+              <button type="submit" class="btn btn-success btn-sm">Reply</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+    <br>
+    <br>
+  {% empty %}
     <p>No comments yet</p>
-    {% endfor %}
+  {% endfor %}
 {% endblock %}

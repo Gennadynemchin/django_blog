@@ -35,6 +35,7 @@ def is_liked(post, user_id):
 @login_required(login_url='/login')
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
+    # comments = post.comments.filter(parent=None)
     comments = post.comments.all()
     like_status = is_liked(post, request.user.id)
     form = CommentForm()
