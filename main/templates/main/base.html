@@ -12,6 +12,16 @@
               crossorigin="anonymous">
     </head>
     <body>
+        <script>
+            document.addEventListener("DOMContentLoaded", function(event) {
+                var scrollpos = localStorage.getItem('scrollpos');
+                if (scrollpos) window.scrollTo(0, scrollpos);
+            });
+
+            window.onbeforeunload = function(e) {
+                localStorage.setItem('scrollpos', window.scrollY);
+            };
+        </script>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
                 <div>
