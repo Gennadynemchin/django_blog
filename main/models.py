@@ -26,6 +26,20 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_comments')
     body = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+
+    class Meta:
+        ordering = ['-date_added']
 
     def __str__(self):
-        return f'{self.user.name} added a comment to post {self.post}'
+        return f'{self.user} added a comment to post {self.post}'
+
+    @property
+    def children(self):
+        return Comment.objects.filter(parent=self).reverse()
+
+    @property
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False

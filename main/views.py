@@ -37,7 +37,8 @@ def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
     comments = post.comments.all()
     like_status = is_liked(post, request.user.id)
-    context = {'post': post, 'comments': comments, 'like_status': like_status}
+    form = CommentForm()
+    context = {'post': post, 'comments': comments, 'like_status': like_status, 'form': form}
     return render(request, 'main/post_detail.html', context)
 
 
@@ -68,18 +69,6 @@ def create_post(request):
     return render(request, 'main/create_post.html', {'form': form})
 
 
-def create_comment(request, slug):
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        user = request.user.id
-        post = Post.objects.get(slug=slug)
-        if form.is_valid():
-            print(form.cleaned_data, user, slug)
-    else:
-        form = CommentForm()
-    return render(request, 'main/create_comment.html', {'form': form})
-
-
 @login_required(login_url='/login')
 def like(request):
     like = request.POST.get('like')
@@ -90,3 +79,28 @@ def like(request):
     else:
         post.likes.add(user)
     return HttpResponseRedirect(reverse('post_detail', args=[post.slug]))
+
+
+@login_required(login_url='/login')
+def create_comment(request, slug):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = Post.objects.get(slug=slug)
+            comment.save()
+            return HttpResponseRedirect(reverse('post_detail', args=[slug]))
+
+
+@login_required(login_url='/login')
+def create_reply(request, slug, comment_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = Post.objects.get(slug=slug)
+            comment.parent = Comment.objects.get(pk=comment_id)
+            comment.save()
+            return HttpResponseRedirect(reverse('post_detail', args=[slug]))
