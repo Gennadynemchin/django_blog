@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Q
+from django.db.models import UniqueConstraint
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 
@@ -10,7 +12,14 @@ class Post(models.Model):
     slug = models.SlugField(null=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
-    likes = models.ManyToManyField(User, related_name='liked_posts')
+    likes = models.ManyToManyField(User, blank=True, related_name='liked_posts')
+    pinned = models.BooleanField(default=False)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['pinned'], condition=Q(pinned=True),
+                             name='unique_pinned')
+        ]
 
     def __str__(self):
         return f'{self.author} created post: {self.title}'
