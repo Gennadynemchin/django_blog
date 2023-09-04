@@ -1,6 +1,59 @@
 {% extends 'main/base.html' %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
+
+  <div>
+          {% if request.user == post.author or perms.main.delete_post %}
+            <form method="post">
+              {% csrf_token %}
+              <!-- Button trigger modal -->
+              <button type="button"
+                      class="btn btn-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModal">Delete post</button>
+              <!-- Modal -->
+              <div class="modal fade"
+                   id="exampleModal"
+                   tabindex="-1"
+                   aria-labelledby="exampleModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm action</h1>
+                      <button type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Are you sure you want to delete the post?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit"
+                              class="btn btn-danger"
+                              name="post_id"
+                              value="{{ post.id }}">Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          {% endif %}
+          {% if user.is_staff %}
+            <br>
+            <form method="post">
+              {% csrf_token %}
+              <button type="submit"
+                      class="btn btn-danger"
+                      name="post_author_id"
+                      value="{{ post.author.id }}">Block user</button>
+            </form>
+          {% endif %}
+        </div>
+
+
   {{ post.title }}
   {{ post.text }}
   <form action="{% url 'like' %}" method="post">
