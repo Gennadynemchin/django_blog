@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
@@ -10,6 +11,13 @@ from .models import Post, Comment
 
 @login_required(login_url='/login')
 def home(request):
+    posts = Post.objects.all().select_related('author').prefetch_related('likes').annotate(Count('likes')).order_by('-created_at')
+    pinned_post = posts.filter(pinned=True).first()
+    popular_posts = posts.annotate(Count('likes')).order_by('likes__count')[:2]
+    return render(request, 'main/home.html', {'posts': posts, 'pinned_post': pinned_post, 'popular_posts': popular_posts})
+
+
+def manage_user(request):
     if request.method == 'POST':
         post_id = request.POST.get('post_id')
         post_author_id = request.POST.get('post_author_id')
@@ -21,8 +29,7 @@ def home(request):
             user = User.objects.filter(id=post_author_id).first()
             user.is_active = False
             user.save()
-    posts = Post.objects.all().select_related('author').prefetch_related('likes')
-    return render(request, 'main/home.html', {'posts': posts})
+    return None
 
 
 def is_liked(post, user_id):
@@ -34,6 +41,7 @@ def is_liked(post, user_id):
 
 @login_required(login_url='/login')
 def post_detail(request, slug):
+    manage_user(request)
     post = get_object_or_404(Post, slug=slug)
     comments = post.comments.all().select_related('user', 'parent')
     like_status = is_liked(post, request.user.id)
