@@ -21,7 +21,7 @@ def home(request):
             user = User.objects.filter(id=post_author_id).first()
             user.is_active = False
             user.save()
-    posts = Post.objects.all().select_related('author')
+    posts = Post.objects.all().select_related('author').prefetch_related('likes')
     return render(request, 'main/home.html', {'posts': posts})
 
 
@@ -35,8 +35,7 @@ def is_liked(post, user_id):
 @login_required(login_url='/login')
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
-    # comments = post.comments.filter(parent=None)
-    comments = post.comments.all()
+    comments = post.comments.all().select_related('user', 'parent')
     like_status = is_liked(post, request.user.id)
     form = CommentForm()
     context = {'post': post, 'comments': comments, 'like_status': like_status, 'form': form}

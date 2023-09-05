@@ -45,7 +45,7 @@ class Comment(models.Model):
 
     @property
     def children(self):
-        return Comment.objects.filter(parent=self).reverse()
+        return Comment.objects.filter(parent=self).reverse().select_related('user', 'parent')
 
     @property
     def is_parent(self):
