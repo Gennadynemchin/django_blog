@@ -10,6 +10,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     text = models.TextField()
     slug = models.SlugField(null=False, unique=True)
+    cover = models.ImageField()
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, blank=True, related_name='liked_posts')
