@@ -3,12 +3,13 @@ from django.db.models import Q
 from django.db.models import UniqueConstraint
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField
 
 
 class Post(models.Model):
     author = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    text = models.TextField()
+    text = RichTextField(blank=True, null=True)
     slug = models.SlugField(null=False, unique=True)
     cover = models.ImageField()
     created_at = models.DateTimeField(auto_now_add=True)
