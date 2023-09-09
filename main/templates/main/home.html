@@ -6,7 +6,7 @@
       <img src="{{ pinned_post.cover.url }}" class="card-img" alt="" style="width: relative; height: 337px; object-fit: cover;">
       <div class="card-body">
         <h5 class="card-title">{{ pinned_post.title }}</h5>
-        <p class="card-text">{{ pinned_post.text|truncatechars:100 }}...</p>
+        <p class="card-text">{{ pinned_post.preview }}...</p>
         <p class="card-text">
           <small class="text-body-secondary">{{ pinned_post.created_at }}</small>
         </p>
@@ -24,7 +24,7 @@
             <div class="mb-1 text-body-secondary">
               {{ popular_post.created_at }} | likes: {{ popular_post.likes.count }} | comments: {{ popular_post.comments.count }}
             </div>
-            <p class="card-text mb-auto">{{ popular_post.text|truncatechars:100 }}</p>
+            <p class="card-text mb-auto">{{ popular_post.preview }}</p>
             <a href="{% url 'post_detail' popular_post.slug %}"
                class="icon-link gap-1 icon-link-hover stretched-link">
               Continue reading
@@ -53,7 +53,7 @@
           <p class="blog-post-meta">
             {{ post.created_at }} by <a href="{% url 'post_detail' post.slug %}">{{ post.author }}</a>
           </p>
-          <p>{{ post.text|truncatechars:140 }}</p>
+          <p>{{ post.preview }}</p>
         </article>
       {% endfor %}
     </div>

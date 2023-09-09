@@ -8,7 +8,8 @@ from ckeditor.fields import RichTextField
 
 class Post(models.Model):
     author = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=100)
+    preview = models.CharField(max_length=140)
     text = RichTextField(blank=True, null=True)
     slug = models.SlugField(null=False, unique=True)
     cover = models.ImageField()
