@@ -12,7 +12,7 @@ class Post(models.Model):
     preview = models.CharField(max_length=140)
     text = RichTextField(blank=True, null=True)
     slug = models.SlugField(null=False, unique=True)
-    cover = models.ImageField()
+    cover = models.ImageField(default='default.jpg')
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(User, blank=True, related_name='liked_posts')

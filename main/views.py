@@ -25,11 +25,12 @@ def manage_user(request):
             post = Post.objects.filter(id=post_id).first()
             if post and (post.author == request.user or request.user.has_perm('main.delete_post')):
                 post.delete()
+                return 'user_deleted'
         elif post_author_id and request.user.is_staff:
             user = User.objects.filter(id=post_author_id).first()
             user.is_active = False
             user.save()
-    return None
+            return 'user_blocked'
 
 
 def is_liked(post, user_id):
@@ -41,12 +42,13 @@ def is_liked(post, user_id):
 
 @login_required(login_url='/login')
 def post_detail(request, slug):
-    manage_user(request)
     post = get_object_or_404(Post, slug=slug)
     comments = post.comments.all().select_related('user', 'parent')
     like_status = is_liked(post, request.user.id)
     form = CommentForm()
     context = {'post': post, 'comments': comments, 'like_status': like_status, 'form': form}
+    if manage_user(request):
+        return redirect('home')
     return render(request, 'main/post_detail.html', context)
 
 

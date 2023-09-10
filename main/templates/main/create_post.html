@@ -10,7 +10,8 @@
 <script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
     <form method="post">
         {% csrf_token %}
-        <div class="col-6">
+        <div class="col-12">
+        {{ form.media }}
         {{ form|crispy }}
         </div>
         <button type="submit" class="btn btn-success">Create post</button>

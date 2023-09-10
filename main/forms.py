@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.forms import Textarea, TextInput
 
 from .models import Post, Comment
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 
 class RegisterForm(UserCreationForm):
@@ -15,6 +16,8 @@ class RegisterForm(UserCreationForm):
 
 
 class PostForm(forms.ModelForm):
+    text = forms.CharField(widget=CKEditorUploadingWidget())
+
     class Meta:
         model = Post
         fields = ['title', 'text']
