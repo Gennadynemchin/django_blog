@@ -3,17 +3,18 @@
 {% load crispy_forms_tags %}
 
 
-{% block title %}Create post{% endblock %}
+{% block title %}
+Create post
+{% endblock %}
 
 {% block content %}
-<script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
-<script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+<div class="container">
     <form method="post">
         {% csrf_token %}
-        <div class="col-12">
-        {{ form.media }}
         {{ form|crispy }}
-        </div>
+        {{ form.media }}
+        {{ form.content }}
         <button type="submit" class="btn btn-success">Create post</button>
     </form>
+</div>
 {% endblock %}
